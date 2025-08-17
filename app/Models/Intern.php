@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Str;
 
 class Intern extends Model
 {
@@ -49,21 +49,9 @@ class Intern extends Model
     protected $guarded = [];
 
     /**
-     * Boot function from Laravel.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->id = Str::uuid();
-        });
-    }
-
-    /**
      * Get the user that owns the intern.
      */
-    public function user(): HasOne
+    public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
@@ -71,8 +59,39 @@ class Intern extends Model
     /**
      * Get the supervisor that owns the intern.
      */
-    public function supervisor(): BelongsTo
+    public function supervisor()
     {
         return $this->belongsTo(Supervisor::class, 'supervisor_id', 'id');
     }
+
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class, 'intern_id', 'id');
+    }
+
+     public function activityReports()
+    {
+        return $this->hasMany(ActivityReport::class, 'intern_id', 'id');
+    }
+
+    public function learningProgress()
+    {
+        return $this->hasMany(LearningProgress::class, 'intern_id', 'id');
+    }   /**
+     * Get all tasks assigned to this intern.
+     */
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'intern_id', 'id');
+    }
+
+    /**
+     * Get all learning modules assigned to this intern.
+     */
+    public function learningModules(): HasMany
+    {
+        return $this->hasMany(Learning_Module::class, 'intern_id', 'id');
+    }
+
+
 }

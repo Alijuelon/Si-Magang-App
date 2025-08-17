@@ -63,7 +63,7 @@ class Supervisor extends Model
     /**
      * Get the user that owns the supervisor.
      */
-    public function user(): HasOne
+    public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
@@ -71,8 +71,22 @@ class Supervisor extends Model
     /**
      * Get the interns for the supervisor.
      */
-    public function interns(): HasMany
+    public function interns()
     {
         return $this->hasMany(Intern::class, 'supervisor_id', 'id');
     }
+
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'supervisor_id', 'id');
+    }
+
+
+    public function learningModules()
+    {
+        return $this->hasMany(Learning_Module::class, 'supervisor_id', 'id');
+    }
+
+
 }
