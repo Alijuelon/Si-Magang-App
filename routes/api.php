@@ -36,6 +36,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
         Route::post('/interns/link', [UserController::class, 'linkIntern']);
+
+        // Admin Reports Routes
+        Route::get('/admin/activity-reports', [AdminController::class, 'getActivityReports']);
+        Route::get('/admin/learning-progress', [AdminController::class, 'getLearningProgress']);
+        Route::get('/admin/submissions', [AdminController::class, 'getSubmissions']);
+        Route::get('/admin/interns/{intern}/reports', [AdminController::class, 'getInternReports']);
+        Route::get('/admin/all-intern-reports', [AdminController::class, 'getAllInternReports']);
     });
 
 
