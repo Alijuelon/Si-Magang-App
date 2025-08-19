@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\LearningProgress;
+use App\Models\Intern;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class InternLearningProgressController extends Controller
 {
-
     public function index()
     {
         $user = Auth::user();
@@ -33,7 +34,7 @@ class InternLearningProgressController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:200',
             'description' => 'nullable|string',
-            'progress_status' => 'required|string|max:50',
+            'progress_status' => ['required', 'string', Rule::in(['in_progress', 'done'])],
             'module_id' => 'required|uuid|exists:learning_modules,id',
         ]);
 
@@ -55,7 +56,7 @@ class InternLearningProgressController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'sometimes|required|string|max:200',
             'description' => 'nullable|string',
-            'progress_status' => 'sometimes|required|string|max:50',
+            'progress_status' => ['sometimes','required', 'string', Rule::in(['in_progress', 'done'])],
             'module_id' => 'sometimes|required|uuid|exists:learning_modules,id',
         ]);
 
@@ -67,6 +68,7 @@ class InternLearningProgressController extends Controller
 
         return response()->json(['message' => 'Learning progress updated successfully.', 'data' => $progress], 200);
     }
+
 
     public function destroy(LearningProgress $progress)
     {

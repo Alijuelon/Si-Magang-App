@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('submissions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('status', 50)->default('not_submitted');
+            $table->enum('status',['submitted','resubmitted'])->default('submitted');
             $table->date('submission_date')->nullable();
             $table->foreignUuid('task_id')->constrained('tasks')->onDelete('cascade');
             $table->foreignUuid('intern_id')->constrained('interns')->onDelete('cascade');

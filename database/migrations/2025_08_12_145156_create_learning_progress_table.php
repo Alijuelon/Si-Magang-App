@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('progress_status')->default('in_progress');
+            $table->enum('progress_status',['in_progress','done'])->default('in_progress');
             $table->foreignUuid('module_id')->constrained('learning_modules')->onDelete('cascade');
             $table->foreignUuid('intern_id')->constrained('interns')->onDelete('cascade');
             $table->timestamps();

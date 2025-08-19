@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Submission;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Intern;
+use App\Models\Submission;
+use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 class SupervisorSubmissionController extends Controller
 {
@@ -19,7 +20,7 @@ class SupervisorSubmissionController extends Controller
 
         $supervisor = $user->supervisor;
         $interns = $supervisor->interns()->with(['submissions.task', 'submissions.attempts'])->get();
-        
+
         return response()->json(['data' => $interns], 200);
     }
 
@@ -51,6 +52,26 @@ class SupervisorSubmissionController extends Controller
         $submissions = $intern->submissions()->whereHas('task', function ($query) use ($user) {
             $query->where('supervisor_id', $user->supervisor->id);
         })->with(['task', 'attempts'])->get();
+
+        return response()->json(['data' => $submissions], 200);
+    }
+
+    public function getTaskSubmissions(Task $task)
+    {
+        $user = Auth::user();
+
+        if (!$user->supervisor) {
+            return response()->json(['message' => 'Unauthorized. User is not a supervisor.'], 403);
+        }
+
+        // Pastikan task ini milik supervisor
+        if ($task->supervisor_id !== $user->supervisor->id) {
+            return response()->json(['message' => 'Forbidden: You do not own this task.'], 403);
+        }
+
+        $submissions = Submission::where('task_id', $task->id)
+            ->with(['intern.user', 'attempts'])
+            ->get();
 
         return response()->json(['data' => $submissions], 200);
     }

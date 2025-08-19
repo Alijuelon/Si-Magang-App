@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,7 @@ use Illuminate\Support\Str;
 
 class LearningProgress extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
         'title',
@@ -19,22 +20,6 @@ class LearningProgress extends Model
         'intern_id',
     ];
 
-    // UUID casting
-    protected $casts = [
-        'id' => 'string',
-    ];
-
-    // Non-incrementing primary key
-    public $incrementing = false;
-    protected $keyType = 'string';
-
-    protected static function boot()
-    {
-        parent::boot();
-        static::creating(function ($model) {
-            $model->{$model->getKeyName()} = (string) Str::uuid();
-        });
-    }
 
     /**
      * Get the intern who owns this progress.
@@ -49,6 +34,6 @@ class LearningProgress extends Model
      */
     public function module()
     {
-        return $this->belongsTo(Learning_Module::class, 'module_id', 'id');
+        return $this->belongsTo(LearningModule::class, 'module_id', 'id');
     }
 }

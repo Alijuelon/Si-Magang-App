@@ -21,10 +21,10 @@ class SupervisorLearningProgress extends Controller
         $allProgress = LearningProgress::with(['intern.user', 'module'])
             ->whereIn('intern_id', $internIds)
             ->get();
-        
+
         return response()->json(['data' => $allProgress], 200);
     }
-    
+
 
     public function show(LearningProgress $learningProgress)
     {
@@ -42,7 +42,7 @@ class SupervisorLearningProgress extends Controller
         return response()->json(['data' => $learningProgress], 200);
     }
 
-     public function getInternProgress(Intern $intern)
+    public function getInternProgress(Intern $intern)
     {
         $user = Auth::user();
         if (!$user->supervisor) {
@@ -60,5 +60,30 @@ class SupervisorLearningProgress extends Controller
 
         return response()->json(['data' => $progress], 200);
     }
+
+    public function getModuleProgress($moduleId)
+    {
+        $user = Auth::user();
+        if (!$user->supervisor) {
+            return response()->json(['message' => 'Unauthorized. User is not a supervisor.'], 403);
+        }
+
+        $supervisorId = $user->supervisor->id;
+
+        // Pastikan module milik supervisor
+        $progress = LearningProgress::with(['intern.user', 'module'])
+            ->whereHas('module', function ($query) use ($moduleId, $supervisorId) {
+                $query->where('id', $moduleId)
+                    ->where('supervisor_id', $supervisorId);
+            })
+            ->get();
+
+        if ($progress->isEmpty()) {
+            return response()->json(['message' => 'No progress found for this module.'], 404);
+        }
+
+        return response()->json(['data' => $progress], 200);
+    }
+
 
 }

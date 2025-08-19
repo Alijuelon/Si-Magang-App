@@ -17,7 +17,6 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->date('due_date');
             $table->foreignUuid('supervisor_id')->constrained('supervisors')->onDelete('cascade');
-            $table->foreignUuid('intern_id')->constrained('interns')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -13,52 +13,12 @@ class Supervisor extends Model
 {
     use HasFactory, HasUuids;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'supervisors';
 
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
     protected $primaryKey = 'id';
 
-    /**
-     * The "type" of the primary key ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $guarded = [];
-
-    /**
-     * Boot function from Laravel.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->id = Str::uuid();
-        });
-    }
 
     /**
      * Get the user that owns the supervisor.
@@ -85,7 +45,7 @@ class Supervisor extends Model
 
     public function learningModules()
     {
-        return $this->hasMany(Learning_Module::class, 'supervisor_id', 'id');
+        return $this->hasMany(LearningModule::class, 'supervisor_id', 'id');
     }
 
 

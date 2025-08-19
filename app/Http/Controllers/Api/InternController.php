@@ -8,11 +8,7 @@ use Illuminate\Http\Request;
 
 class InternController extends Controller
 {
-    /**
-     * Get all tasks assigned to the authenticated intern.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function getTasks()
     {
         $user = Auth::user();
@@ -23,16 +19,12 @@ class InternController extends Controller
             return response()->json(['message' => 'Unauthorized. User is not a valid intern.'], 403);
         }
 
-        $tasks = $user->intern->tasks;
+        $tasks = $user->intern->tasks()->with('supervisor')->get();
 
         return response()->json(['data' => $tasks], 200);
     }
 
-    /**
-     * Get all learning modules from the connected supervisor.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function getLearningModules()
     {
         $user = Auth::user();
@@ -44,7 +36,7 @@ class InternController extends Controller
             return response()->json(['message' => 'Unauthorized. User is not a valid intern.'], 403);
         }
 
-        $learningModules = $user->intern->learningModules;
+        $learningModules = $user->intern->learningModules()->with('supervisor')->get();
 
         return response()->json(['data' => $learningModules], 200);
     }
