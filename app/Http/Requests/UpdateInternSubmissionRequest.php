@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class UpdateInternSubmissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,9 +21,11 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-           return [
-            'email' => 'required|string',
-            'password' => 'required|string',
+        return [
+            'status' => 'sometimes|required|string|in:submitted,resubmitted',
+            'submission_date' => 'sometimes|required|date',
+            'files' => 'sometimes|array',
+            'files.*' => 'file|max:10240',
         ];
     }
 }

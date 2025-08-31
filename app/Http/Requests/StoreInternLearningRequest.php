@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class LoginRequest extends FormRequest
+class StoreInternLearningRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,9 +22,11 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-           return [
-            'email' => 'required|string',
-            'password' => 'required|string',
+        return [
+            'title' => 'required|string|max:200',
+            'description' => 'nullable|string',
+            'progress_status' => ['required', 'string', Rule::in(['in_progress', 'done'])],
+            'module_id' => 'required|uuid|exists:learning_modules,id',
         ];
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +31,7 @@ class TaskController extends Controller
     /**
      * Store a new task.
      */
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request)
     {
         $supervisor = Auth::user()->supervisor;
 
@@ -37,11 +39,7 @@ class TaskController extends Controller
             return response()->json(['message' => 'Supervisor not found.'], 404);
         }
 
-        $validator = Validator::make($request->all(), [
-            'title'       => 'required|string|max:200',
-            'description' => 'nullable|string',
-            'due_date'    => 'required|date',
-        ]);
+        $validator = $request->validated();
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -89,7 +87,7 @@ class TaskController extends Controller
 
         return response()->json(['message' => 'Task assigned successfully.'], 200);
     }
-    
+
     public function assignedTaskByIntern($internId)
     {
         $supervisor = Auth::user()->supervisor;
@@ -112,7 +110,7 @@ class TaskController extends Controller
     /**
      * Update an existing task.
      */
-    public function update(Request $request, Task $task)
+    public function update(UpdateTaskRequest $request, Task $task)
     {
         $supervisor = Auth::user()->supervisor;
 
@@ -120,13 +118,7 @@ class TaskController extends Controller
             return response()->json(['message' => 'Forbidden: You do not own this task.'], 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'title'       => 'sometimes|required|string|max:200',
-            'description' => 'nullable|string',
-            'due_date'    => 'sometimes|required|date',
-            'intern_ids'   => 'sometimes|array',
-            'intern_ids.*' => 'uuid|exists:interns,id'
-        ]);
+        $validator = $request->validated();
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);

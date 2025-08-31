@@ -66,7 +66,7 @@ class UserController extends Controller
                 'birth_date'    => 'required|date',
                 'start_date'    => 'required|date',
                 'end_date'      => 'required|date',
-                'intern_type'   => 'required|in:SMK,College,General',
+                'intern_type'   => 'required|in:School,College,General',
                 'supervisor_id' => 'required|exists:supervisors,id',
             ];
         } else {
@@ -148,7 +148,7 @@ class UserController extends Controller
                 'birth_date'    => 'sometimes|required|date',
                 'start_date'    => 'sometimes|required|date',
                 'end_date'      => 'sometimes|required|date',
-                'intern_type'   => 'sometimes|required|in:SMK,College,General',
+                'intern_type'   => 'sometimes|required|in:School,College,General',
                 'supervisor_id' => 'sometimes|required|exists:supervisors,id',
             ];
             $dataToUpdate = $request->only([

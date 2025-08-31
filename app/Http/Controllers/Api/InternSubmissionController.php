@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateInternSubmissionRequest;
 use App\Models\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +35,7 @@ class InternSubmissionController extends Controller
         return response()->json(['message' => 'Forbidden: You do not have access to this submission.'], 403);
     }
 
-    public function update(Request $request, Submission $submission)
+    public function update(UpdateInternSubmissionRequest $request, Submission $submission)
     {
         $user = Auth::user();
 
@@ -43,12 +44,7 @@ class InternSubmissionController extends Controller
             return response()->json(['message' => 'Forbidden: You do not have access to this submission.'], 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'status' => 'sometimes|required|string|in:submitted,resubmitted',
-            'submission_date' => 'sometimes|required|date',
-            'files' => 'sometimes|array',
-            'files.*' => 'file|max:10240',
-        ]);
+        $validator = $request->validated();
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);

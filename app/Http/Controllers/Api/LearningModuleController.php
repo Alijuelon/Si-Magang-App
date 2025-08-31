@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreLearningModuleRequest;
+use App\Http\Requests\UpdateLearningModuleRequest;
 use App\Models\LearningModule; // Diperbaiki: Hapus underscore
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -19,14 +21,11 @@ class LearningModuleController extends Controller
         return response()->json(['data' => $modules], 200);
     }
 
-    public function store(Request $request)
+    public function store(StoreLearningModuleRequest $request)
     {
         $supervisor = Auth::user()->supervisor;
 
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:200',
-            'description' => 'nullable|string',
-        ]);
+        $validator = $request->validated();
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
@@ -88,25 +87,13 @@ class LearningModuleController extends Controller
         ], 200);
     }
 
-    public function update(Request $request, LearningModule $learningModule)
+    public function update(UpdateLearningModuleRequest $request, LearningModule $learningModule)
     {
         if (Auth::user()->supervisor->id !== $learningModule->supervisor_id) {
             return response()->json(['message' => 'Forbidden: You do not own this module.'], 403);
         }
 
-        $supervisor = Auth::user()->supervisor;
-
-        // 🔹 Validasi input
-        $validator = Validator::make($request->all(), [
-            'title' => 'sometimes|required|string|max:200',
-            'description' => 'nullable|string',
-            'intern_ids' => [
-                'nullable',
-                'array',
-                Rule::in($supervisor->interns->pluck('id')) // Pastikan intern milik supervisor ini
-            ],
-            'intern_ids.*' => 'uuid|exists:interns,id',
-        ]);
+        $validator = $request->validated();
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);

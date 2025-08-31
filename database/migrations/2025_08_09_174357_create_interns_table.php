@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('birth_date');
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('intern_type', ['SMK', 'College', 'General']);
+            $table->enum('intern_type', ['School', 'College', 'General']);
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('supervisor_id')->nullable()->constrained('supervisors')->onDelete('set null');
             $table->timestamps();
